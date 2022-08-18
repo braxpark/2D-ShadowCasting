@@ -2,7 +2,7 @@
 
 Interactive 2D-RayTracing visualizer. Utilizes the GJK collision procedure to march each ray. Interacts correctly with any complex convex polygon in 2D space. Implemented using SFML. Future versions will have options to use different collision procedures (SDF, etc.).
 
-![Alt Text](https://media.giphy.com/media/sj52P3iCk7u5nrcPWr/giphy.gif)
+![Alt Text](https://github.com/brax-p/2D-Raytracer/blob/main/src/gifs/2D-RayTracing_Demonstration.gif "Demo")
 
 
 ### How To Run:
@@ -23,6 +23,6 @@ Move the mouse to control the Star (the light source).
 Enjoy :D.
 
 
-##Credits/Resources
+#Credits/Resources
 
 GJK implementation takes inspiration from [here](https://github.com/kroitor/gjk.c). <br /> SFML can be found [here](https://www.sfml-dev.org/).
