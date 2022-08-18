@@ -1,3 +1,28 @@
-# 2D-Raytracer
-2D Ray-Marching Program that allows for realtime simulation of primitive lighting. Utilizes the GJK algorithm for 
-ray collisions.
+# Ray Marching!
+
+Interactive 2D-RayTracing visualizer. Utilizes the GJK collision procedure to march each ray. Interacts correctly with any complex convex polygon in 2D space. Implemented using SFML. Future versions will have options to use different collision procedures (SDF, etc.).
+
+![Alt Text](https://media.giphy.com/media/sj52P3iCk7u5nrcPWr/giphy.gif)
+
+
+### How To Run:
+On Ubuntu-based linux, install SFML.
+
+```bash
+sudo apt-get install libsfml-dev
+```
+Clone the repo. \
+Then in the root directory of the repo, run:
+
+```base
+make && ./run/app
+```
+
+Move the mouse to control the Star (the light source).
+
+Enjoy :D.
+
+
+###Credits/Resources
+
+GJK implementation takes inspiration from [here](https://github.com/kroitor/gjk.c). <br /> SFML can be found [here](https://www.sfml-dev.org/).

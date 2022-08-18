@@ -1,8 +1,16 @@
 #include <SFML/Graphics.hpp>
 #include <cmath>
 #include <vector>
+#include <iostream>
 
 const float radianFactor = (1.f / 360.f) * (2.f * M_PI);
+
+// ----------------------------------------------------------------------------
+//
+// SECTION CREDITS TO https://github.com/kroitor/gjk.c for GJK implementation
+// 
+// ----------------------------------------------------------------------------
+
 struct vec2
 {
 
@@ -15,9 +23,7 @@ struct vec2
     }
 };
 
-//-----------------------------------------------------------------------------
 // Basic vector arithmetic operations
-
 vec2 subtract(vec2 a, vec2 b)
 {
     a.x -= b.x;
@@ -38,10 +44,7 @@ vec2 perpendicular(vec2 v)
 float dotProduct(vec2 a, vec2 b) { return a.x * b.x + a.y * b.y; }
 float lengthSquared(vec2 v) { return v.x * v.x + v.y * v.y; }
 
-//-----------------------------------------------------------------------------
 // Triple product expansion is used to calculate perpendicular normal vectors
-// which kinda 'prefer' pointing towards the Origin in Minkowski space
-
 vec2 tripleProduct(vec2 a, vec2 b, vec2 c)
 {
 
@@ -56,11 +59,7 @@ vec2 tripleProduct(vec2 a, vec2 b, vec2 c)
     return r;
 }
 
-//-----------------------------------------------------------------------------
-// This is to compute average center (roughly). It might be different from
-// Center of Gravity, especially for bodies with nonuniform density,
-// but this is ok as initial direction of simplex search in GJK.
-
+// Center of Gravity for initial simplex calculator
 vec2 averagePoint(const std::vector<vec2> vertices, size_t count)
 {
     vec2 avg = {0.f, 0.f};
@@ -111,11 +110,8 @@ vec2 support(const std::vector<vec2> vertices1, size_t count1,
     return subtract(vertices1[i], vertices2[j]);
 }
 
-//-----------------------------------------------------------------------------
 // The GJK yes/no test
-
 int iter_count = 0;
-
 int gjk(const std::vector<vec2> vertices1, size_t count1,
         const std::vector<vec2> vertices2, size_t count2)
 {
@@ -194,9 +190,24 @@ int gjk(const std::vector<vec2> vertices1, size_t count1,
 
     return 0;
 }
+//-----------------------------------------------------------------------------
+//
+// END OF GJK SECTION, CREDITS TO https://github.com/kroitor/gjk.c
+//
+// ----------------------------------------------------------------------------
 
+
+
+
+// ----------------------------------------------------------------------------
+//HELPER FUNCTIONS FOR INTEGRATION WITH GJK AND COLLISION PROCEDURES
+// ----------------------------------------------------------------------------
+
+
+// Determine if some set of points which resemble a polygon, exceeds the World boundary
+// The window is treated as the world boundary
 bool isCollidingWithWorld(sf::RenderWindow &window, std::vector<sf::Vector2f> points){
-    //only need to check middle 2 points, the far edge of each beam
+    //only need to check middle 2 points, the far edge of each beam relative to the Star
     sf::Vector2u windowSize = window.getSize();
     for(int i = 1; i < 3; i++){
         if(points[i].x > 0 and points[i].x < windowSize.x){
@@ -207,6 +218,8 @@ bool isCollidingWithWorld(sf::RenderWindow &window, std::vector<sf::Vector2f> po
     }
     return true;
 }
+
+// Get a vector of Vector2f points, which are the points of the ConvexShape, shape
 std::vector<sf::Vector2f> getPoints(sf::ConvexShape &shape)
 {
     size_t size = shape.getPointCount();
@@ -218,6 +231,8 @@ std::vector<sf::Vector2f> getPoints(sf::ConvexShape &shape)
     return std::move(result);
 }
 
+
+// Get equivalent Vector2f from vec2 vector
 std::vector<sf::Vector2f> toVector2f(std::vector<vec2> v)
 {
     size_t size = v.size();
@@ -229,6 +244,8 @@ std::vector<sf::Vector2f> toVector2f(std::vector<vec2> v)
     return std::move(result);
 }
 
+
+// Get equivalent vec2 vector from Vector2f vector
 std::vector<vec2> toVec2(std::vector<sf::Vector2f> v)
 {
     size_t size = v.size();
@@ -241,6 +258,8 @@ std::vector<vec2> toVec2(std::vector<sf::Vector2f> v)
     return std::move(result);
 }
 
+
+// Get the vector of vec2 points from a ConvexShape, shape
 std::vector<vec2> getVec2FromConvexShape(sf::ConvexShape &shape)
 {
     std::vector<sf::Vector2f> current;
@@ -253,6 +272,7 @@ std::vector<vec2> getVec2FromConvexShape(sf::ConvexShape &shape)
     return std::move(result);
 }
 
+// Print to terminal, the point values of each point in a ConvexShape. shape
 void printPoints(sf::ConvexShape &shape)
 {
     size_t size = shape.getPointCount();
@@ -263,6 +283,8 @@ void printPoints(sf::ConvexShape &shape)
     }
     std::cout << "-------------------------------------------\n";
 }
+
+// Set points in some ConvexShape, shape from a list of Vector2f points
 void setPoints(std::vector<sf::Vector2f> &points, sf::ConvexShape &shape)
 {
     size_t size = points.size();
@@ -274,9 +296,6 @@ void setPoints(std::vector<sf::Vector2f> &points, sf::ConvexShape &shape)
 }
 
 //  STAR CLASS
-//
-//
-//
 class Star
 {
     public:
@@ -304,7 +323,17 @@ Star::Star() {
 std::vector<vec2> Star::getVec2PointsFromRectangleShape(sf::RectangleShape &shape){
     sf::Vector2f pos = shape.getPosition(), size = shape.getSize();
     float x = size.x, y = size.y, theta = shape.getRotation() * radianFactor;
-    std::vector<sf::Vector2f> points = { // A -> B -> C -> D
+
+
+    // Points are defined in this order:
+    // A -> B -> C -> D
+    //
+    // A -- B
+    // |    |
+    // D -- C
+
+
+    std::vector<sf::Vector2f> points = {
         sf::Vector2f(0.f, 0.f),
         sf::Vector2f(x, 0.f),
         sf::Vector2f(x, y),
@@ -323,15 +352,23 @@ std::vector<vec2> Star::getVec2PointsFromRectangleShape(sf::RectangleShape &shap
 }
 
 void Star::update(sf::Vector2f mousePos, std::vector<sf::ConvexShape> &staticShapes, sf::RenderWindow &window){
+
+    //Procedure:
+
+    // For each beam,
+    // Determine if the beam collides with either the world or a shape in the world.
+    // If so, stop marching, else increase length by some increment and continue;
+
     for(size_t i = 0; i < numberOfBeams; i++){
-        beams[i].setSize(sf::Vector2f(1.f, 2.f));
+        beams[i].setSize(sf::Vector2f(1.f, 3.f));
         beams[i].setPosition(mousePos);
         bool works = true;
+        sf::Vector2f size = beams[i].getSize();
+        float angle = beams[i].getRotation();
+        float theta = angle * radianFactor;
         while(works){
-            sf::Vector2f size = beams[i].getSize();
-            float angle = beams[i].getRotation();
-            float x = size.x, y = size.y, theta = angle * radianFactor;
-
+            
+            float x = size.x, y = size.y;
             float xComp = x * cos(theta) - y * sin(theta), yComp = x * sin(theta) + y * cos(theta);
 
             xComp += mousePos.x;
