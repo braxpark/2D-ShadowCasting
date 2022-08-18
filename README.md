@@ -23,6 +23,6 @@ Move the mouse to control the Star (the light source).
 Enjoy :D.
 
 
-###Credits/Resources
+##Credits/Resources
 
 GJK implementation takes inspiration from [here](https://github.com/kroitor/gjk.c). <br /> SFML can be found [here](https://www.sfml-dev.org/).
