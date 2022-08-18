@@ -50,9 +50,8 @@ void Controller::updateEvent(sf::Event &event){
         else if(event.key.code == sf::Keyboard::R){
         }
         else if(event.key.code == sf::Keyboard::Space){
-            model.movingStar = (model.movingStar) ? false : true;
         }
-        else if(event.key.code == sf::Keyboard::Right || event.key.code == sf::Keyboard::Left){
+        else if(event.key.code == sf::Keyboard::Right || event.key.code == sf::Keyboard::Left || event.key.code == sf::Keyboard::Up || event.key.code == sf::Keyboard::Down){
         }
     }
     else if(event.type == sf::Event::MouseWheelScrolled){

@@ -37,7 +37,7 @@ namespace Default {
 
 int main(){
     Default::App application;
-    std::string APP_TITLE = "Sorting!";
+    std::string APP_TITLE = "Rays!";
     application.run(APP_TITLE);
     return 0;
 }

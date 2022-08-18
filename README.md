@@ -1,2 +1,3 @@
 # 2D-Raytracer
-Dynamic 2D-Raytracing application that uses the GJK algorithm for ray collisions.
+2D Ray-Marching Program that allows for realtime simulation of primitive lighting. Utilizes the GJK algorithm for 
+ray collisions.
