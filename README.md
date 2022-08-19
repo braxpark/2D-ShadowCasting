@@ -1,6 +1,6 @@
 # Ray Marching!
 
-Interactive 2D-RayTracing visualizer. Utilizes the GJK collision procedure to march each ray. Interacts correctly with any complex convex polygon in 2D space. Implemented using SFML. Future versions will have options to use different collision procedures (SDF, etc.).
+Interactive 2D-ray-caster visualizer. Utilizes the GJK collision procedure to march each ray. Interacts correctly with any complex convex polygon in 2D space. Implemented using SFML. Future versions will have options to use different collision procedures (SDF, etc.).
 
 ![Alt Text](https://github.com/brax-p/2D-Raytracer/blob/main/src/gifs/2D-RayTracing_Demonstration.gif "Demo")
 
