@@ -1,4 +1,4 @@
-# Ray Marching!
+# Ray (shadow)Casting
 
 Interactive 2D-ray-caster visualizer. Utilizes the GJK collision procedure to march each ray. Interacts correctly with any complex convex polygon in 2D space. Implemented using SFML. Future versions will have options to use different collision procedures (SDF, etc.).
 
