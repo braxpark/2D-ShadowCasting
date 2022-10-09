@@ -1,0 +1,11 @@
+#ignore
+.vs/
+
+bin/
+
+src/obj
+
+*.sln
+*.vcxproj
+*.vcxproj.filters
+*.vcxproj.user
